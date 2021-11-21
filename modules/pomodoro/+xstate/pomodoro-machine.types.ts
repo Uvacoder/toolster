@@ -22,6 +22,10 @@ export type PomodoroContext = {
   finishedTimers: FinishedTimer[];
   startedInTheSession?: boolean;
 
+  timerStartTs?: number;
+  pauseTs: number;
+  hasBeenPaused: boolean;
+
   settings: PomodoroSettings;
 };
 

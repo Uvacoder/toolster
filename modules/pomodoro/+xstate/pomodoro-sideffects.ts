@@ -53,10 +53,16 @@ export const doHandleTimerEnd = assign<PomodoroContext, PomodoroEvents>((ctx) =>
 });
 
 export const doIncrementClock = assign<PomodoroContext, PomodoroEvents>({
-  elapsed: (ctx) => ctx.elapsed + ONE_SECOND * 10,
+  elapsed: (ctx) => {
+    const diff = +new Date() - (ctx?.timerStartTs || 0);
+    return diff - (diff % 1000);
+  },
 });
 
 export const doResetTimer = assign<PomodoroContext, PomodoroEvents>({
   elapsed: 0,
   startedInTheSession: false,
+  hasBeenPaused: false,
+  pauseTs: 0,
+  timerStartTs: undefined,
 });

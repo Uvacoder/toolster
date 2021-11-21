@@ -34,6 +34,8 @@ export const PomodoroStateProvider: FC = ({ children }) => {
     context: {
       shortBreakCount: 0,
       elapsed: 0,
+      pauseTs: 0,
+      hasBeenPaused: false,
       currentMode: PomodoroModes.Pomodoro,
       finishedTimers: [],
       settings,

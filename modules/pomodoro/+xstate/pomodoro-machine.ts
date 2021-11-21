@@ -1,8 +1,6 @@
 import { assign, createMachine } from 'xstate';
 import { PomodoroEvents, PomodoroContext, PomodoroModes } from './pomodoro-machine.types';
 
-const ONE_SECOND = 1000;
-
 export const pomodoroMachine = createMachine<PomodoroContext, PomodoroEvents>({
   initial: 'idle',
   states: {
@@ -32,6 +30,10 @@ export const pomodoroMachine = createMachine<PomodoroContext, PomodoroEvents>({
       },
     },
     running: {
+      entry: assign({
+        timerStartTs: (ctx) => (ctx.hasBeenPaused ? ctx.timerStartTs : +new Date()),
+        hasBeenPaused: (_) => false,
+      }),
       always: [
         {
           actions: ['doShowNotification', 'doPlayNotificationSound'],
@@ -42,7 +44,7 @@ export const pomodoroMachine = createMachine<PomodoroContext, PomodoroEvents>({
       invoke: {
         id: 'tickClock',
         src: () => (cb) => {
-          const interval = setInterval(() => cb('TICK'), ONE_SECOND);
+          const interval = setInterval(() => cb('TICK'), 500);
           return () => clearInterval(interval);
         },
       },
@@ -61,6 +63,19 @@ export const pomodoroMachine = createMachine<PomodoroContext, PomodoroEvents>({
       },
     },
     paused: {
+      entry: assign({
+        pauseTs: (_) => +new Date(),
+        hasBeenPaused: (_) => true,
+      }),
+      exit: assign((ctx, e) => {
+        if (e.type === 'START') {
+          const elpasedInPause = +new Date() - ctx.pauseTs;
+          return {
+            timerStartTs: (ctx?.timerStartTs || +new Date()) + elpasedInPause,
+          };
+        }
+        return ctx;
+      }),
       on: {
         RESET: 'reset',
         START: 'running',
@@ -76,34 +91,26 @@ export const pomodoroMachine = createMachine<PomodoroContext, PomodoroEvents>({
   on: {
     SKIP: {
       target: 'idle',
-      actions: assign((ctx) => {
-        const { currentMode, shortBreakCount } = ctx;
+      actions: [
+        assign((ctx) => {
+          const { currentMode, shortBreakCount } = ctx;
 
-        let nextMode = PomodoroModes.Pomodoro;
+          if (currentMode !== PomodoroModes.Pomodoro) {
+            return {
+              currentMode: PomodoroModes.Pomodoro,
+              previousMode: currentMode,
+              shortBreakCount: currentMode === PomodoroModes.ShortBreak ? shortBreakCount + 1 : shortBreakCount,
+            };
+          }
 
-        if (currentMode === PomodoroModes.Pomodoro) {
-          nextMode =
-            shortBreakCount >= ctx.settings.longBreakAfter ? PomodoroModes.LongBreak : PomodoroModes.ShortBreak;
-        }
-
-        let updatedShortBreakCount = shortBreakCount;
-
-        if (currentMode === PomodoroModes.ShortBreak) {
-          updatedShortBreakCount += 1;
-        }
-
-        if (currentMode === PomodoroModes.LongBreak) {
-          updatedShortBreakCount = 0;
-        }
-
-        return {
-          elapsed: 0,
-          currentMode: nextMode,
-          previousMode: currentMode,
-          shortBreakCount: updatedShortBreakCount,
-          startedInTheSession: false,
-        };
-      }),
+          return {
+            currentMode:
+              shortBreakCount >= ctx.settings.longBreakAfter ? PomodoroModes.LongBreak : PomodoroModes.ShortBreak,
+            previousMode: currentMode,
+          };
+        }),
+        'doResetTimer',
+      ],
     },
 
     'UPDATE.SETTINGS': {
