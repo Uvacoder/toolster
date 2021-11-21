@@ -1,5 +1,5 @@
 import { NotificationSounds } from '@enums/notification-sounds.enum';
-import { ModeLengthMap } from './+xstate/pomodoro-machine.types';
+import { ModeLengthMap, PomodoroModes } from './+xstate/pomodoro-machine.types';
 
 export type PomodoroSettings = {
   durations: ModeLengthMap;
@@ -15,4 +15,20 @@ export type PomodoroSettings = {
     soundVolume: number;
     soundName: NotificationSounds;
   };
+};
+
+export type PomodoroColorTextConfig = Record<
+  PomodoroModes,
+  {
+    color: string;
+    ctaMessage: string;
+    notificationTitle: string;
+  }
+>;
+
+export type PomodoroSettingsTemplate = {
+  name: string;
+  config: PomodoroSettings;
+  canEdit: boolean;
+  canDelete: boolean;
 };

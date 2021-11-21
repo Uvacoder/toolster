@@ -4,18 +4,12 @@ import { useNotifications } from '@mantine/notifications';
 import { useActor, useInterpret } from '@xstate/react';
 import { createContext, FC, useContext } from 'react';
 import type { Interpreter } from 'xstate';
-import { defaultPomodoroSettings, PomodoroStorageKeys } from '../pomodoro.const';
+import { PomodoroNotification } from '../components/PomodoroNotification';
+import { defaultPomodoroSettings, headingMapWithColor, PomodoroStorageKeys } from '../pomodoro.const';
+import { getNotificationTitle } from '../pomodoro.utils';
 import { pomodoroMachine } from './pomodoro-machine';
 import { PomodoroEvents, PomodoroContext, PomodoroModes } from './pomodoro-machine.types';
-import {
-  doHandleTimerEnd,
-  doHandlePomodoroEnd,
-  doHandleBreakEnd,
-  doIncrementClock,
-  doResetTimer,
-  isPomodoroOver,
-  isBreakOver,
-} from './pomodoro-sideffects';
+import { doHandleTimerEnd, doIncrementClock, doResetTimer, isPomodoroOver, isBreakOver } from './pomodoro-sideffects';
 
 type PomodoroContextType = Interpreter<PomodoroContext, any, PomodoroEvents>;
 
@@ -42,8 +36,6 @@ export const PomodoroStateProvider: FC = ({ children }) => {
     },
     devTools: true,
     actions: {
-      doHandlePomodoroEnd,
-      doHandleBreakEnd,
       doIncrementClock,
       doResetTimer,
       doHandleTimerEnd,
@@ -52,9 +44,40 @@ export const PomodoroStateProvider: FC = ({ children }) => {
           return;
         }
 
+        const mode = ctx.previousMode || PomodoroModes.Pomodoro;
+
+        const notificationColor = headingMapWithColor[mode].color;
+        const notificationTitle = getNotificationTitle(mode);
+
+        const isABreak = mode !== PomodoroModes.Pomodoro;
+        const isPomodoro = !isABreak;
+
+        const shouldShowNotificationWithCta =
+          (isABreak && !ctx.settings.automaticallyStartPomodoro) ||
+          (isPomodoro && !ctx.settings.automaticallyStartBreaks);
+
+        if (shouldShowNotificationWithCta) {
+          const notificationId = notifications.showNotification({
+            title: notificationTitle,
+            color: notificationColor,
+            autoClose: false,
+            message: (
+              <PomodoroNotification
+                mode={ctx.currentMode}
+                onStart={() => {
+                  service.send('START');
+                  notifications.hideNotification(notificationId);
+                }}
+                color={notificationColor}
+              />
+            ),
+          });
+          return;
+        }
         notifications.showNotification({
-          title: `${ctx?.previousMode} has ended`,
-          message: 'Time to focus',
+          color: notificationColor,
+          title: notificationTitle,
+          message: headingMapWithColor[ctx.currentMode].text,
         });
       },
       doPlayNotificationSound: (ctx) => {
