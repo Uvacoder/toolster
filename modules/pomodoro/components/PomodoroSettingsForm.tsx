@@ -194,14 +194,16 @@ export const PomodoroSettingsForm: FC<PomodoroSettingsFormProps> = ({ settings, 
           />
         </InputWrapper>
 
-        <Group position="right">
-          <Button
-            leftIcon={<FiPlay />}
-            onClick={() => playNotificationSound(form.values.sounds.soundName, volume / 100)}
-          >
-            Test Sound
-          </Button>
-        </Group>
+        <Button
+          ml="auto"
+          radius="md"
+          variant="outline"
+          color="gray"
+          leftIcon={<FiPlay />}
+          onClick={() => playNotificationSound(form.values.sounds.soundName, form.values.sounds.soundVolume / 100)}
+        >
+          Test Sound
+        </Button>
 
         <Group style={{ alignSelf: 'flex-end' }}>
           <Button color="gray" radius="md" variant="outline" type="reset">
