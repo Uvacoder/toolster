@@ -15,9 +15,10 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@enums/*": ["./lib/enums/*"],
-      "@hooks/*": ["./lib/hooks/*"],
-      "@modules/*": ["modules/*"]
+      "@enums/*": ["lib/enums/*"],
+      "@hooks/*": ["lib/hooks/*"],
+      "@modules/*": ["modules/*"],
+      "@providers/*": ["components/providers/*"]
     },
     "incremental": true
   },

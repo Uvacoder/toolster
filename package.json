@@ -11,17 +11,15 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@mantine/core": "^3.1.8",
-    "@mantine/hooks": "^3.1.8",
-    "@mantine/next": "^3.1.8",
-    "@mantine/notifications": "^3.1.9",
+    "@mantine/core": "^3.2.2",
+    "@mantine/hooks": "^3.2.2",
+    "@mantine/next": "^3.2.2",
+    "@mantine/notifications": "^3.2.2",
     "@xstate/inspect": "^0.5.1",
     "@xstate/react": "^1.6.2",
     "dexie": "^3.2.0",
-    "dexie-react-hooks": "^1.0.7",
     "next": "12.0.2",
     "react": "17.0.2",
-    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "17.0.2",
     "react-icons": "^4.3.1",
     "xstate": "^4.26.0"
