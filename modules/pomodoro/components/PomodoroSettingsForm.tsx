@@ -200,7 +200,7 @@ export const PomodoroSettingsForm: FC<PomodoroSettingsFormProps> = ({ settings, 
           variant="outline"
           color="gray"
           leftIcon={<FiPlay />}
-          onClick={() => playNotificationSound(form.values.sounds.soundName, form.values.sounds.soundVolume / 100)}
+          onClick={() => playNotificationSound(form.values.sounds.soundName, volume / 100)}
         >
           Test Sound
         </Button>

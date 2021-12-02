@@ -2,7 +2,7 @@ import { useLocalStorageObject } from '@hooks/use-local-storage-object';
 import { useNotificationSound } from '@hooks/use-notification-sound';
 import { useNotifications } from '@mantine/notifications';
 import { useActor, useInterpret } from '@xstate/react';
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, useContext, useEffect } from 'react';
 import type { Interpreter } from 'xstate';
 import { PomodoroNotification } from '../components/PomodoroNotification';
 import { defaultPomodoroSettings, headingMapWithColor, PomodoroStorageKeys } from '../pomodoro.const';
@@ -11,7 +11,7 @@ import { pomodoroMachine } from './pomodoro-machine';
 import { PomodoroEvents, PomodoroContext, PomodoroModes } from './pomodoro-machine.types';
 import { doHandleTimerEnd, doIncrementClock, doResetTimer, isPomodoroOver, isBreakOver } from './pomodoro-sideffects';
 
-type PomodoroContextType = Interpreter<PomodoroContext, any, PomodoroEvents>;
+type PomodoroContextType = Interpreter<PomodoroContext, never, PomodoroEvents>;
 
 export const PomodoroStateContext = createContext<PomodoroContextType | null>(null);
 
@@ -96,8 +96,10 @@ export const PomodoroStateProvider: FC = ({ children }) => {
   return <PomodoroStateContext.Provider value={service}>{children}</PomodoroStateContext.Provider>;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 export const usePomodoroContext = (): PomodoroContextType => useContext(PomodoroStateContext)!;
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const usePomodorActor = () => {
   const service = usePomodoroContext();
   return useActor(service);

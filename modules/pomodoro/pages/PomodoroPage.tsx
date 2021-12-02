@@ -1,48 +1,49 @@
 import { ActionIcon, Card, Center, Container, Drawer, Group, SegmentedControl, Text, Tooltip } from '@mantine/core';
 import { useSelector } from '@xstate/react';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { FiSkipForward, FiRepeat, FiSettings } from 'react-icons/fi';
 import { useLocalStorageObject } from '@hooks/use-local-storage-object';
-import { FinishedOptions } from 'stream';
+import { useLiveQuery } from '@hooks/use-live-query';
 import { usePomodoroContext } from '../+xstate/pomodoro.context';
 import { PomodoroControls } from '../components/PomodoroControls';
 import { selectControlState, selectProgressStats } from '../+xstate/pomodoro.selectors';
 import { PomodoroCircularProgress } from '../components/PomodoroCircularProgress';
 import { PomodoroSettingsForm } from '../components/PomodoroSettingsForm';
-import { FinishedTimer, PomodoroModes } from '../+xstate/pomodoro-machine.types';
+import { PomodoroModes } from '../+xstate/pomodoro-machine.types';
 import { defaultPomodoroSettings, headingMapWithColor, PomodoroStorageKeys } from '../pomodoro.const';
-
 import { pomodoroDb } from '../pomodoro.db';
+import { getDateBounds } from '../pomodoro.utils';
 
 /* 
 Will need the following:
 
 --- UTILS ---
-1. Convert time to readable format -> minutes / seconds
-2. Convert time to % format
+1. Convert time to readable format -> minutes / seconds -- DONE
+2. Convert time to % format -- DONE
 
 
 --- Learn about ---
-1. Playing sounds from JS / react
-2. Stable timers in XState
-3. Testing XState
+1. Playing sounds from JS / react -- DONE
+2. Stable timers in XState -- DONE
+3. Testing XState 
 4. Testing react components
 
 */
 
-// const addPomodoro = async (pomodoro: FinishedTimer) => {
-//   await pomodoroDb?.pomodoros.add(pomodoro);
-// };
-
-// addPomodoro({
-//   endTs: 1200,
-//   duration: 200,
-//   timerType: PomodoroModes.Pomodoro,
-// });
+const [start, end] = getDateBounds();
 
 export const PomodoroPage: FC = () => {
   const service = usePomodoroContext();
   const progress = useSelector(service, selectProgressStats);
+
+  const pomodoros = useLiveQuery(
+    () =>
+      pomodoroDb.pomodoros
+        .where('createTs')
+        .between(start, end)
+        .toArray((r) => r.reduce((acc, c) => acc + c.duration, 0)),
+    []
+  );
 
   const { send } = service;
 

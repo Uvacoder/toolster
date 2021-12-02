@@ -1,4 +1,5 @@
 import { assign } from 'xstate';
+import { pomodoroDb } from '../pomodoro.db';
 import { PomodoroEvents, PomodoroContext, PomodoroModes } from './pomodoro-machine.types';
 
 const isShortBreakOver = (ctx: PomodoroContext): boolean =>
@@ -21,6 +22,9 @@ export const doHandleTimerEnd = assign<PomodoroContext, PomodoroEvents>((ctx) =>
       previousMode: ctx.currentMode,
     };
   }
+
+  pomodoroDb.pomodoros.put({ createTs: +new Date(), duration: ctx.settings.durations[PomodoroModes.Pomodoro] });
+
   return {
     elapsed: 0,
     previousMode: ctx.currentMode,

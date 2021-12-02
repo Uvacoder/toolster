@@ -1,11 +1,10 @@
 import { NotificationSounds } from '@enums/notification-sounds.enum';
 import { PomodoroModes } from './+xstate/pomodoro-machine.types';
-import { PomodoroSettings } from './pomodoro.types';
+import { PomodoroSettings, PomodoroSettingsTemplate } from './pomodoro.types';
 import { minutesToMs } from './pomodoro.utils';
 
 export enum PomodoroStorageKeys {
   Settings = 'pomodoroSettings',
-  State = 'pomodoroState',
 }
 
 export const headingMapWithColor: Record<PomodoroModes, { text: string; color: string }> = {
