@@ -36,7 +36,7 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     'import/no-cycle': [0, { ignoreExternal: true }],
     'prefer-const': 'warn',
-    'no-use-before-define': 'warn',
+    'no-use-before-define': 'off',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false, variables: true }],
     'consistent-return': 'off',
