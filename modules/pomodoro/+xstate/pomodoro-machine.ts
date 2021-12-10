@@ -116,7 +116,12 @@ export const pomodoroMachine = createMachine<PomodoroContext, PomodoroEvents>({
 
     'UPDATE.SETTINGS': {
       target: 'idle',
-      actions: [assign((ctx, e) => ({ ...ctx, settings: e.data })), 'doResetTimer'],
+      actions: [
+        assign({
+          settings: (_, e) => ({ ...e.data }),
+        }),
+        'doResetTimer',
+      ],
     },
 
     'UPDATE.MODE': {

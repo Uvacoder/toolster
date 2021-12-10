@@ -18,7 +18,9 @@
       "@enums/*": ["lib/enums/*"],
       "@hooks/*": ["lib/hooks/*"],
       "@modules/*": ["modules/*"],
-      "@providers/*": ["components/providers/*"]
+      "@providers/*": ["components/providers/*"],
+      "@atoms/*": ["components/atoms/*"],
+      "@molecules/*": ["components/molecules/*"]
     },
     "incremental": true
   },

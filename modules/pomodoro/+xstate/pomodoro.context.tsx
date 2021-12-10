@@ -2,7 +2,7 @@ import { useLocalStorageObject } from '@hooks/use-local-storage-object';
 import { useNotificationSound } from '@hooks/use-notification-sound';
 import { useNotifications } from '@mantine/notifications';
 import { useActor, useInterpret } from '@xstate/react';
-import { createContext, FC, useContext, useEffect } from 'react';
+import { createContext, FC, useContext } from 'react';
 import type { Interpreter } from 'xstate';
 import { PomodoroNotification } from '../components/PomodoroNotification';
 import { defaultPomodoroSettings, headingMapWithColor, PomodoroStorageKeys } from '../pomodoro.const';

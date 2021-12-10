@@ -32,3 +32,9 @@ export type PomodoroSettingsTemplate = {
   canEdit: boolean;
   canDelete: boolean;
 };
+
+export type ComplexTime = {
+  hours: number;
+  minutes: number;
+  seconds: number;
+};

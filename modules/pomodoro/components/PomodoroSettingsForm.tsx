@@ -9,6 +9,7 @@ import {
   Switch,
   SegmentedControl,
   NumberInput,
+  ScrollArea,
 } from '@mantine/core';
 import { useForm } from '@mantine/hooks';
 import { FiPlay } from 'react-icons/fi';
@@ -48,173 +49,177 @@ export const PomodoroSettingsForm: FC<PomodoroSettingsFormProps> = ({ settings, 
   }, []);
 
   return (
-    <form
-      onSubmit={form.onSubmit((values) => {
-        const updated = {
-          ...values,
-          durations: { ...convertDuration(durations, minutesToMs) },
-          sounds: { ...values.sounds, soundVolume: volume },
-        };
-        onSettingsUpdate(updated);
-      })}
-      onReset={() => {
-        setDurations(() => convertDuration(settings.durations, msToMinutes));
-        setVolume(() => settings.sounds.soundVolume);
-        form.reset();
-      }}
-    >
-      <Group direction="column" grow>
-        <Divider label="Durations" labelPosition="center" my="sm" />
+    <ScrollArea style={{ height: '100%' }}>
+      <form
+        style={{ padding: '1rem' }}
+        onSubmit={form.onSubmit((values) => {
+          const updated = {
+            ...values,
+            durations: { ...convertDuration(durations, minutesToMs) },
+            sounds: { ...values.sounds, soundVolume: volume },
+          };
+          onSettingsUpdate(updated);
+        })}
+        onReset={() => {
+          setDurations(() => convertDuration(settings.durations, msToMinutes));
+          setVolume(() => settings.sounds.soundVolume);
+          form.reset();
+        }}
+      >
+        <Group direction="column" grow>
+          <Divider label="Durations" labelPosition="center" />
 
-        <InputWrapper description="Pomodoro Duration (minutes)">
-          <Slider
-            value={durations[PomodoroModes.Pomodoro]}
-            onChange={(value) => mutateDurations(PomodoroModes.Pomodoro, value)}
-            min={1}
-            max={60}
-            step={1}
-            marks={[
-              { value: 15, label: '15m' },
-              { value: 30, label: '30m' },
-              { value: 45, label: '45m' },
-            ]}
-          />
-        </InputWrapper>
-        <Space />
-        <InputWrapper description="Short Break Duration (minutes)">
-          <Slider
-            min={1}
-            max={30}
-            step={1}
-            onChange={(value) => mutateDurations(PomodoroModes.ShortBreak, value)}
-            value={durations[PomodoroModes.ShortBreak]}
-            marks={[
-              { value: 5, label: '5m' },
-              { value: 15, label: '15m' },
-              { value: 25, label: '25m' },
-            ]}
-          />
-        </InputWrapper>
-        <Space />
-
-        <InputWrapper description="Long Break Duration (minutes)">
-          <Slider
-            min={1}
-            max={60}
-            step={1}
-            onChange={(value) => mutateDurations(PomodoroModes.LongBreak, value)}
-            value={durations[PomodoroModes.LongBreak]}
-            marks={[
-              { value: 15, label: '15m' },
-              { value: 30, label: '30m' },
-              { value: 45, label: '45m' },
-            ]}
-          />
-        </InputWrapper>
-
-        <Divider label="General Settings" labelPosition="center" mb="sm" mt="xl" />
-
-        <Switch
-          label="Automatically Start Breaks"
-          checked={form.values.automaticallyStartBreaks}
-          onChange={(e) => form.setFieldValue('automaticallyStartBreaks', e.currentTarget.checked)}
-        />
-        <Switch
-          label="Automatically Start Focus Time"
-          checked={form.values.automaticallyStartPomodoro}
-          onChange={(e) => form.setFieldValue('automaticallyStartPomodoro', e.currentTarget.checked)}
-        />
-
-        <Switch
-          label="Show Notifications"
-          checked={form.values.showNotifications}
-          onChange={(e) => form.setFieldValue('showNotifications', e.currentTarget.checked)}
-        />
-        <Switch
-          label="Show Nav Widget"
-          checked={form.values.showWidget}
-          onChange={(e) => form.setFieldValue('showWidget', e.currentTarget.checked)}
-        />
-
-        <NumberInput
-          min={1}
-          max={10}
-          value={form.values.longBreakAfter}
-          description="Start a Long Break After"
-          onChange={(e) => form.setFieldValue('longBreakAfter', e)}
-        />
-
-        <Divider label="Sounds" labelPosition="center" my="sm" />
-
-        <Group grow position="center" align="center" mb="md">
-          <Switch
-            label="Play Sounds"
-            checked={form.values.sounds.playSound}
-            onChange={(e) => {
-              form.setFieldValue('sounds', {
-                ...form.values.sounds,
-                playSound: e.currentTarget.checked,
-              });
-            }}
-          />
-
-          <InputWrapper description="Volume">
+          <InputWrapper description="Pomodoro Duration (minutes)">
             <Slider
+              value={durations[PomodoroModes.Pomodoro]}
+              onChange={(value) => mutateDurations(PomodoroModes.Pomodoro, value)}
               min={1}
-              max={100}
+              max={60}
               step={1}
-              value={volume}
-              onChange={setVolume}
               marks={[
-                { value: 25, label: '25' },
-                { value: 50, label: '50' },
-                { value: 75, label: '75' },
+                { value: 15, label: '15m' },
+                { value: 30, label: '30m' },
+                { value: 45, label: '45m' },
               ]}
             />
           </InputWrapper>
-        </Group>
+          <Space />
+          <InputWrapper description="Short Break Duration (minutes)">
+            <Slider
+              min={1}
+              max={30}
+              step={1}
+              onChange={(value) => mutateDurations(PomodoroModes.ShortBreak, value)}
+              value={durations[PomodoroModes.ShortBreak]}
+              marks={[
+                { value: 5, label: '5m' },
+                { value: 15, label: '15m' },
+                { value: 25, label: '25m' },
+              ]}
+            />
+          </InputWrapper>
+          <Space />
 
-        <InputWrapper description="Sound played when the timer is finished">
-          <SegmentedControl
-            onChange={(value) => {
-              form.setFieldValue('sounds', {
-                ...form.values.sounds,
-                soundName: value as NotificationSounds,
-              });
-            }}
-            color="blue"
-            value={form.values.sounds.soundName}
-            data={[
-              { label: NotificationSounds.Beep, value: NotificationSounds.Beep },
-              { label: NotificationSounds.Bell, value: NotificationSounds.Bell },
-              { label: NotificationSounds.Chime, value: NotificationSounds.Chime },
-              { label: NotificationSounds.Flute, value: NotificationSounds.Flute },
-              { label: NotificationSounds.Magic, value: NotificationSounds.Magic },
-            ]}
+          <InputWrapper description="Long Break Duration (minutes)">
+            <Slider
+              min={1}
+              max={60}
+              step={1}
+              onChange={(value) => mutateDurations(PomodoroModes.LongBreak, value)}
+              value={durations[PomodoroModes.LongBreak]}
+              marks={[
+                { value: 15, label: '15m' },
+                { value: 30, label: '30m' },
+                { value: 45, label: '45m' },
+              ]}
+            />
+          </InputWrapper>
+
+          <NumberInput
+            mt="lg"
+            min={1}
+            max={10}
+            value={form.values.longBreakAfter}
+            description="Long Break Interval"
+            onChange={(e) => form.setFieldValue('longBreakAfter', e)}
           />
-        </InputWrapper>
 
-        <Button
-          ml="auto"
-          radius="md"
-          variant="outline"
-          color="gray"
-          leftIcon={<FiPlay />}
-          onClick={() => playNotificationSound(form.values.sounds.soundName, volume / 100)}
-        >
-          Test Sound
-        </Button>
+          <Divider label="General Settings" labelPosition="center" />
 
-        <Group style={{ alignSelf: 'flex-end' }}>
-          <Button color="gray" radius="md" variant="outline" type="reset">
-            Reset
+          <Switch
+            label="Automatically Start Breaks"
+            checked={form.values.automaticallyStartBreaks}
+            onChange={(e) => form.setFieldValue('automaticallyStartBreaks', e.currentTarget.checked)}
+          />
+          <Switch
+            label="Automatically Start Focus Time"
+            checked={form.values.automaticallyStartPomodoro}
+            onChange={(e) => form.setFieldValue('automaticallyStartPomodoro', e.currentTarget.checked)}
+          />
+
+          <Switch
+            label="Show Notifications"
+            checked={form.values.showNotifications}
+            onChange={(e) => form.setFieldValue('showNotifications', e.currentTarget.checked)}
+          />
+          <Switch
+            label="Show Nav Widget"
+            checked={form.values.showWidget}
+            onChange={(e) => form.setFieldValue('showWidget', e.currentTarget.checked)}
+          />
+
+          <Divider label="Sounds" labelPosition="center" />
+
+          <Group grow position="center" align="center" mb="md">
+            <Switch
+              label="Play Sounds"
+              checked={form.values.sounds.playSound}
+              onChange={(e) => {
+                form.setFieldValue('sounds', {
+                  ...form.values.sounds,
+                  playSound: e.currentTarget.checked,
+                });
+              }}
+            />
+
+            <InputWrapper description="Volume">
+              <Slider
+                min={1}
+                max={100}
+                step={1}
+                value={volume}
+                onChange={setVolume}
+                marks={[
+                  { value: 25, label: '25' },
+                  { value: 50, label: '50' },
+                  { value: 75, label: '75' },
+                ]}
+              />
+            </InputWrapper>
+          </Group>
+
+          <InputWrapper description="Sound played when the timer is finished">
+            <SegmentedControl
+              onChange={(value) => {
+                form.setFieldValue('sounds', {
+                  ...form.values.sounds,
+                  soundName: value as NotificationSounds,
+                });
+              }}
+              color="blue"
+              value={form.values.sounds.soundName}
+              data={[
+                { label: NotificationSounds.Beep, value: NotificationSounds.Beep },
+                { label: NotificationSounds.Bell, value: NotificationSounds.Bell },
+                { label: NotificationSounds.Chime, value: NotificationSounds.Chime },
+                { label: NotificationSounds.Flute, value: NotificationSounds.Flute },
+                { label: NotificationSounds.Magic, value: NotificationSounds.Magic },
+              ]}
+            />
+          </InputWrapper>
+
+          <Button
+            ml="auto"
+            radius="md"
+            variant="outline"
+            color="gray"
+            leftIcon={<FiPlay />}
+            onClick={() => playNotificationSound(form.values.sounds.soundName, volume / 100)}
+          >
+            Test Sound
           </Button>
-          <Button radius="md" styles={{ root: { width: '10rem' } }} type="submit">
-            Save
-          </Button>
+
+          <Group mb="sm">
+            <Button color="gray" radius="md" variant="outline" type="reset" ml="auto">
+              Reset
+            </Button>
+            <Button radius="md" styles={{ root: { width: '10rem' } }} type="submit">
+              Save
+            </Button>
+          </Group>
+          <Space />
         </Group>
-        <Space />
-      </Group>
-    </form>
+      </form>
+    </ScrollArea>
   );
 };

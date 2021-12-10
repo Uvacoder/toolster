@@ -36,7 +36,8 @@ export const doHandleTimerEnd = assign<PomodoroContext, PomodoroEvents>((ctx) =>
 export const doIncrementClock = assign<PomodoroContext, PomodoroEvents>({
   elapsed: (ctx) => {
     const diff = +new Date() - (ctx?.timerStartTs || 0);
-    return diff - (diff % 1000);
+    const newTime = diff - (diff % 1000);
+    return ctx.elapsed !== newTime ? newTime : ctx.elapsed;
   },
 });
 

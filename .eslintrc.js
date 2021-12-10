@@ -45,8 +45,10 @@ module.exports = {
     camelcase: 'off',
     'react/no-array-index-key': 'warn',
     'no-return-await': 'off',
-    // 'react/display-name': 'off',
+    'react/display-name': 'off',
     'react/require-default-props': 'off',
+
+    'import/namespace': 'off',
   },
   settings: {
     'import/resolver': {

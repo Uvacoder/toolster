@@ -1,13 +1,9 @@
 import { PomodoroControlState, PomodoroProgress, PomodoroState } from './pomodoro-machine.types';
 
 export const selectProgressStats = (state: PomodoroState): PomodoroProgress => {
-  const {
-    elapsed,
-    currentMode,
-    settings: { durations },
-  } = state.context;
+  const { elapsed, currentMode, settings } = state.context;
 
-  const currentModeLength = durations[currentMode];
+  const currentModeLength = settings.durations[currentMode];
 
   const completionPct = (elapsed / currentModeLength) * 100;
 
